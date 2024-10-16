@@ -1,22 +1,30 @@
 from blockchain import *
 from transaction import *
+from wallet import *
 
 if __name__ == '__main__':
 
+    alice_wallet = Wallet()
+    bob_wallet = Wallet()
+
+    tx1 = Transaction(alice_wallet.get_public_key_string(), bob_wallet.get_public_key_string(), 50)
+    tx1.signature = alice_wallet.sign_transaction(tx1)
+
+    if tx1.signature:
+        print("Transaction signed successfully")
+    else:
+        print("Transaction signing failed")
+
     blockchain = BlockChain()
 
-    blockchain.add_transactions(Transaction('Yipmong', 'Said', 30))
-    blockchain.add_transactions(Transaction('Said', 'Yipmong', 20))
-    blockchain.add_transactions(Transaction('John', 'Said', 10))
-    blockchain.add_transactions(Transaction('Nelson', 'Hosiah', 5))
-
-    print('Mining new block ...')
-
-    blockchain.mine_pending_transactions('Yipmong')
+    blockchain.add_transactions(tx1)
+    blockchain.mine_pending_transactions(alice_wallet.get_public_key_string())
 
     for block in blockchain.chain:
-        print(f"Block {block.index}:")
+        print(f"Block {block.index}")
         for tx in block.transactions:
-            print(f"{tx.sender} sent {tx.amount} to {tx.recipient}")
-
-    print(f"Is the BlockChain Valid? {blockchain.is_chain_valid()}")
+            print(f"Sender: {tx.sender}")
+            print(f"Recipient: {tx.recipient}")
+            print(f"Amount: {tx.amount}")
+            print(f"Signature: {tx.signature}")
+    print(f"Is blockchain valid? {blockchain.is_chain_valid()}")

@@ -41,9 +41,11 @@ class BlockChain:
     def add_transactions(self, transaction):
         if transaction.is_valid_transaction():
             self.pending_transactions.append(transaction)
+        else:
+            print("Invalid Transaction. Transaction rejected!")
 
     def mine_pending_transactions(self, miner_address):
-        reward_transaction = transaction.Transaction('System', miner_address, self.mining_reward)
+        reward_transaction = Transaction('System', miner_address, self.mining_reward)
         self.pending_transactions.append(reward_transaction)
         new_block = Block(len(self.chain), self.get_last_block().hash, 'Pending Transactions', self.pending_transactions, self.difficulty)
 
@@ -69,5 +71,9 @@ class BlockChain:
 
             if current_block.previous_hash != previous_block.hash:
                 return False
+            
+            for transaction in current_block.transactions:
+                if not transaction.is_valid_transaction():
+                    return False
 
         return True

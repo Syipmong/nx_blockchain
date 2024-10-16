@@ -8,7 +8,7 @@ class Transaction:
         self.signature = signature
 
     def is_valid_transaction(self):
-        if self.sender == "system":
+        if self.sender == "System":
             return True
         
         if not self.signature:

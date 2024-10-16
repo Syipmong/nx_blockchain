@@ -4,14 +4,17 @@ from cryptography.hazmat.primitives import serialization, hashes
 class Wallet:
     def __init__(self):
         self.private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-        self.public_key = self.private_key().public_key()
+        self.public_key = self.private_key.public_key()
 
     def sign_transaction(self, transaction):
         transaction_string = f"{transaction.sender} {transaction.recipient} {transaction.amount}".encode()
 
         signature = self.private_key.sign(
             transaction_string,
-            padding.PSS(mgf=padding.MGF1(hashes.SHA256)),
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()),
+                salt_length=padding.PSS.MAX_LENGTH
+            ),
             hashes.SHA256()
         )
         return signature
@@ -21,6 +24,4 @@ class Wallet:
             encoding=serialization.Encoding.PEM,
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
-        return public_key_bytes().decode('utf-8')
-    
-
+        return public_key_bytes.decode('utf-8')
