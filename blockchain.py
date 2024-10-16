@@ -16,7 +16,7 @@ class Block:
 
     def calculate_hash(self):
         transaction_string = "".join([str(tx.__dict__) for tx in self.transactions])
-        block_string = f"{self.index}{self.previous_hash}{self.data}{self.timestamp}{self.nonce}{transaction_string}"
+        block_string = f"{self.index}{self.previous_hash}{self.timestamp}{self.nonce}{transaction_string}"
         return hashlib.sha256(block_string.encode()).hexdigest()
 
     def mine_block(self):
@@ -38,7 +38,7 @@ class BlockChain:
         first_block.mine_block()
         return first_block
 
-    def add_transactions(self, transaction):
+    def add_transaction(self, transaction):
         if transaction.is_valid_transaction():
             self.pending_transactions.append(transaction)
         else:
@@ -47,33 +47,32 @@ class BlockChain:
     def mine_pending_transactions(self, miner_address):
         reward_transaction = Transaction('System', miner_address, self.mining_reward)
         self.pending_transactions.append(reward_transaction)
+
         new_block = Block(len(self.chain), self.get_last_block().hash, 'Pending Transactions', self.pending_transactions, self.difficulty)
-
         new_block.mine_block()
-        self.chain.append(new_block)
 
+        self.chain.append(new_block)
         self.pending_transactions = []
 
     def get_last_block(self):
         return self.chain[-1]
 
-    def add_block(self, new_block):
-        new_block.previous_hash = self.get_last_block().hash
-        new_block.mine_block()
-        self.chain.append(new_block)
-
     def is_chain_valid(self):
         for i in range(1, len(self.chain)):
             current_block = self.chain[i]
             previous_block = self.chain[i - 1]
+
             if current_block.hash != current_block.calculate_hash():
+                print("Current block hash is invalid!")
                 return False
 
             if current_block.previous_hash != previous_block.hash:
+                print("Previous block hash is invalid!")
                 return False
-            
+
             for transaction in current_block.transactions:
                 if not transaction.is_valid_transaction():
+                    print("Invalid transaction in block!")
                     return False
 
         return True
