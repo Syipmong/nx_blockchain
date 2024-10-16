@@ -4,7 +4,7 @@ import time
 from transaction import *
 
 class Block:
-    def __init__(self, index, previous_hash, data, transactions, difficulty=4):
+    def __init__(self, index, previous_hash, data, transactions, difficulty=8):
         self.index = index
         self.previous_hash = previous_hash
         self.data = data
@@ -38,8 +38,8 @@ class BlockChain:
         first_block.mine_block()
         return first_block
 
-    def add_transaction(self, transaction):
-        if transaction.is_valid_transaction():
+    def add_transactions(self, transaction):
+        if transaction.verify_transaction(transaction.sender):
             self.pending_transactions.append(transaction)
         else:
             print("Invalid Transaction. Transaction rejected!")
@@ -47,10 +47,8 @@ class BlockChain:
     def mine_pending_transactions(self, miner_address):
         reward_transaction = Transaction('System', miner_address, self.mining_reward)
         self.pending_transactions.append(reward_transaction)
-
         new_block = Block(len(self.chain), self.get_last_block().hash, 'Pending Transactions', self.pending_transactions, self.difficulty)
         new_block.mine_block()
-
         self.chain.append(new_block)
         self.pending_transactions = []
 
@@ -63,16 +61,9 @@ class BlockChain:
             previous_block = self.chain[i - 1]
 
             if current_block.hash != current_block.calculate_hash():
-                print("Current block hash is invalid!")
                 return False
 
             if current_block.previous_hash != previous_block.hash:
-                print("Previous block hash is invalid!")
                 return False
-
-            for transaction in current_block.transactions:
-                if not transaction.is_valid_transaction():
-                    print("Invalid transaction in block!")
-                    return False
 
         return True
