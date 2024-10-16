@@ -29,3 +29,7 @@ if __name__ == '__main__':
                 print("Signature: None")
 
     print(f"\nIs blockchain valid? {blockchain.is_chain_valid()}")
+
+    blockchain.save_to_file('blockchain.json')
+
+    blockchain.load_from_file('blockchain.json')

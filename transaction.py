@@ -1,12 +1,13 @@
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives.asymmetric import padding, rsa
 from cryptography.hazmat.primitives import hashes, serialization
+import base64
 
 class Transaction:
-    def __init__(self, sender, recipient, amount):
+    def __init__(self, sender, recipient, amount, signature=None):
         self.sender = sender
         self.recipient = recipient
         self.amount = amount
-        self.signature = None
+        self.signature = signature
 
     def sign_transaction(self, private_key):
         transaction_string = f"{self.sender} {self.recipient} {self.amount}".encode()
@@ -22,11 +23,7 @@ class Transaction:
 
     def verify_transaction(self, public_key_str):
         if self.sender == 'System':
-            return True
-
-        if not self.signature:
-            print("No signature in the transaction")
-            return False
+            return True 
 
         transaction_string = f"{self.sender} {self.recipient} {self.amount}".encode()
         public_key = serialization.load_pem_public_key(public_key_str.encode())
@@ -45,3 +42,16 @@ class Transaction:
         except Exception as e:
             print(f"Signature verification failed: {e}")
             return False
+
+    def to_dict(self):
+        return {
+            'sender': self.sender,
+            'recipient': self.recipient,
+            'amount': self.amount,
+            'signature': base64.b64encode(self.signature).decode('utf-8') if self.signature else None
+        }
+
+    @staticmethod
+    def from_dict(data):
+        signature = base64.b64decode(data['signature']) if data['signature'] else None
+        return Transaction(data['sender'], data['recipient'], data['amount'], signature)
