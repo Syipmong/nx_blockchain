@@ -1,7 +1,7 @@
 import hashlib
 import time
 
-import transaction
+from transaction import *
 
 class Block:
     def __init__(self, index, previous_hash, data, transactions, difficulty=4):
@@ -39,7 +39,8 @@ class BlockChain:
         return first_block
 
     def add_transactions(self, transaction):
-        self.pending_transactions.append(transaction)
+        if transaction.is_valid_transaction():
+            self.pending_transactions.append(transaction)
 
     def mine_pending_transactions(self, miner_address):
         reward_transaction = transaction.Transaction('System', miner_address, self.mining_reward)
