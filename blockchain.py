@@ -91,7 +91,7 @@ class BlockChain:
 
     def save_to_file(self, filename):
         try:
-            with open(filename, 'w') as file:
+            with open(filename, '+w') as file:
                 json.dump([block.to_dict() for block in self.chain], file)
             print("Blockchain saved successfully.")
         except Exception as e:
