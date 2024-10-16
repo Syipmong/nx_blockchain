@@ -1,4 +1,4 @@
-from cryptography.hazmat.primitives.asymmetric import padding, rsa
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import hashes, serialization
 
 class Transaction:
@@ -23,6 +23,10 @@ class Transaction:
     def verify_transaction(self, public_key_str):
         if self.sender == 'System':
             return True
+
+        if not self.signature:
+            print("No signature in the transaction")
+            return False
 
         transaction_string = f"{self.sender} {self.recipient} {self.amount}".encode()
         public_key = serialization.load_pem_public_key(public_key_str.encode())
