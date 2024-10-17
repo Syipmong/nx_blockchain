@@ -3,15 +3,19 @@ from cryptography.hazmat.primitives import hashes, serialization
 import base64
 
 class Transaction:
-    def __init__(self, sender, recipient, amount, fee=1):
+    def __init__(self, sender, recipient, amount, signature=None, fee=1):
         self.sender = sender
         self.recipient = recipient
         self.amount = amount
-        self.signature = None
+        self.signature = signature
         self.fee = fee
 
+    def get_total_amount(self):
+        return self.amount + self.fee
+
+
     def sign_transaction(self, private_key):
-        transaction_string = f"{self.sender} {self.recipient} {self.amount}".encode()
+        transaction_string = f"{self.sender} {self.recipient} {self.amount} {self.fee}".encode()
         self.signature = private_key.sign(
             transaction_string,
             padding.PSS(
@@ -26,7 +30,7 @@ class Transaction:
         if self.sender == 'System':
             return True 
 
-        transaction_string = f"{self.sender} {self.recipient} {self.amount}".encode()
+        transaction_string = f"{self.sender} {self.recipient} {self.amount} {self.fee}".encode()
         public_key = serialization.load_pem_public_key(public_key_str.encode())
         try:
             public_key.verify(
@@ -49,6 +53,7 @@ class Transaction:
             'sender': self.sender,
             'recipient': self.recipient,
             'amount': self.amount,
+            'fee': self.fee,
             'signature': base64.b64encode(self.signature).decode('utf-8') if self.signature else None
         }
 

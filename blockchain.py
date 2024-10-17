@@ -33,7 +33,8 @@ class Block:
             'timestamp': self.timestamp,
             'nonce': self.nonce,
             'difficulty': self.difficulty,
-            'hash': self.hash
+            'hash': self.hash,
+            
         }
 
     @staticmethod
@@ -97,7 +98,8 @@ class BlockChain:
     def save_to_file(self, filename='blockchain.json'):
         try:
             with open(filename, 'w') as file:
-                json.dump([block.to_dict() for block in self.chain], file)
+                # json.dump([block.to_dict() for block in self.chain], file)
+                json.dump(self.chain, file, default=lambda x: x.to_dict())
             print("Blockchain saved successfully.")
         except Exception as e:
             print(f"Error saving blockchain: {e}")
@@ -105,7 +107,8 @@ class BlockChain:
     def load_from_file(self, filename='blockchain.json'):
         try:
             with open(filename, 'r') as file:
-                self.chain = [Block.from_dict(block_data) for block_data in json.load(file)]
+                chain_data = json.load(file)
+                self.chain = [Block.from_dict(block_data) for block_data in chain_data]
             print("Blockchain loaded successfully.")
         except FileNotFoundError:
             print("No existing blockchain found. Creating a new one.")

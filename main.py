@@ -29,6 +29,7 @@ if __name__ == '__main__':
 
     tx1 = Transaction(alice_wallet.get_public_key_string(), bob_wallet.get_public_key_string(), 50)
     tx1.sign_transaction(alice_wallet.private_key)
+    tx1.verify_transaction(alice_wallet.get_public_key_string())
 
     blockchain.add_transactions(tx1)
     blockchain.mine_pending_transactions(alice_wallet.get_public_key_string())
@@ -71,4 +72,3 @@ if __name__ == '__main__':
     blockchain.load_from_file('blockchain.json')
 
 
-    
