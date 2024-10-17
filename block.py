@@ -1,6 +1,6 @@
 import hashlib
 import time
-import base64
+import os
 from transaction import Transaction
 
 class Block:
@@ -32,7 +32,8 @@ class Block:
             'timestamp': self.timestamp,
             'nonce': self.nonce,
             'difficulty': self.difficulty,
-            'hash': self.hash
+            'hash': self.hash,
+            
         }
 
     @staticmethod
