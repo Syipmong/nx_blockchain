@@ -56,8 +56,7 @@ class Transaction:
         signature = base64.b64decode(data['signature']) if data['signature'] else None
         return Transaction(data['sender'], data['recipient'], data['amount'], signature)
     
-    def short_public_key(self,public_key_str):
-        return f"{public_key_str[:30]}...{public_key_str[-30:]}"
+    
     
 
     

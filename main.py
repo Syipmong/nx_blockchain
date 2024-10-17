@@ -4,11 +4,14 @@ from wallet import *
 import base64
 
 
+def short_public_key(public_key_str):
+        return f"{public_key_str[:30]}...{public_key_str[-30:]}"
+
 def faucet(wallet, amount, blockchain):
     reward_transaction = Transaction('System', wallet.get_public_key_string(), amount)
     blockchain.add_transactions(reward_transaction)
     blockchain.mine_pending_transactions(wallet.get_public_key_string())
-    print(f"Granted {amount} units to {tx.short_public_key(wallet.get_public_key_string())}")
+    print(f"Granted {amount} units to {short_public_key(wallet.get_public_key_string())}")
 
 if __name__ == '__main__':
 
@@ -51,8 +54,8 @@ if __name__ == '__main__':
     for block in blockchain.chain:
         print(f"\nBlock {block.index}")
         for tx in block.transactions:
-            print(f"Sender: {tx.short_public_key(tx.sender)}")
-            print(f"Recipient: {tx.short_public_key(tx.recipient)}")
+            print(f"Sender: {short_public_key(tx.sender)}")
+            print(f"Recipient: {short_public_key(tx.recipient)}")
             print(f"Amount: {tx.amount}")
             if tx.signature:
                 signature = base64.b64encode(tx.signature).decode('utf-8')
