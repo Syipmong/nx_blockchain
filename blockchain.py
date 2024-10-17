@@ -59,6 +59,11 @@ class BlockChain:
         return first_block
 
     def add_transactions(self, transaction):
+        if transaction.sender != "System":
+            sender_balance = self.get_balance(transaction.sender)
+            if sender_balance < transaction.amount:
+                print("Insufficient balance. Transaction rejected!")
+                return
         if transaction.verify_transaction(transaction.sender):
             self.pending_transactions.append(transaction)
             print("Transaction added successfully.")
@@ -89,15 +94,15 @@ class BlockChain:
 
         return True
 
-    def save_to_file(self, filename):
+    def save_to_file(self, filename='blockchain.json'):
         try:
-            with open(filename, '+w') as file:
+            with open(filename, 'w') as file:
                 json.dump([block.to_dict() for block in self.chain], file)
             print("Blockchain saved successfully.")
         except Exception as e:
             print(f"Error saving blockchain: {e}")
 
-    def load_from_file(self, filename):
+    def load_from_file(self, filename='blockchain.json'):
         try:
             with open(filename, 'r') as file:
                 self.chain = [Block.from_dict(block_data) for block_data in json.load(file)]
@@ -106,3 +111,14 @@ class BlockChain:
             print("No existing blockchain found. Creating a new one.")
         except Exception as e:
             print(f"Error loading blockchain: {e}")
+
+    def get_balance(self, public_key_str):
+        balance = 0
+        for block in self.chain:
+            for tx in block.transactions:
+                if tx.sender == public_key_str:
+                    balance -= tx.amount
+                if tx.recipient == public_key_str:
+                    balance += tx.amount
+
+        return balance
