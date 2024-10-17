@@ -3,11 +3,12 @@ from cryptography.hazmat.primitives import hashes, serialization
 import base64
 
 class Transaction:
-    def __init__(self, sender, recipient, amount, signature=None):
+    def __init__(self, sender, recipient, amount, fee=1):
         self.sender = sender
         self.recipient = recipient
         self.amount = amount
-        self.signature = signature
+        self.signature = None
+        self.fee = fee
 
     def sign_transaction(self, private_key):
         transaction_string = f"{self.sender} {self.recipient} {self.amount}".encode()

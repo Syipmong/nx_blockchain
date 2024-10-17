@@ -48,7 +48,7 @@ class Block:
 
 class BlockChain:
     def __init__(self):
-        self.difficulty = 4
+        self.difficulty = 5
         self.chain = [self.create_first_block()]
         self.pending_transactions = []
         self.mining_reward = 100

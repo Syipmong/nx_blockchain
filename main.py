@@ -53,18 +53,22 @@ if __name__ == '__main__':
 
     for block in blockchain.chain:
         print(f"\nBlock {block.index}")
-        for tx in block.transactions:
-            print(f"Sender: {short_public_key(tx.sender)}")
-            print(f"Recipient: {short_public_key(tx.recipient)}")
-            print(f"Amount: {tx.amount}")
-            if tx.signature:
-                signature = base64.b64encode(tx.signature).decode('utf-8')
-                print(f"Signature: {signature}")
-            else:
-                print("Signature: None")
+    for tx in block.transactions:
+        print(f"Sender: {short_public_key(tx.sender)}")
+        print(f"Recipient: {short_public_key(tx.recipient)}")
+        print(f"Amount: {tx.amount}")
+        if tx.signature:
+            signature = base64.b64encode(tx.signature).decode('utf-8')
+            print(f"Signature: {signature}")
+        else:
+            print("Signature: None")
+
 
     print(f"\nIs blockchain valid? {blockchain.is_chain_valid()}")
 
     blockchain.save_to_file('blockchain.json')
 
     blockchain.load_from_file('blockchain.json')
+
+
+    
